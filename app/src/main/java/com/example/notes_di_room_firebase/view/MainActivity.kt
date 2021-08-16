@@ -32,9 +32,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.viewState().observe(this, { state ->
             state?.let { adapter.notes = state.notes }
         })
+
+        ui.fab.setOnClickListener { openNoteScreen() }
     }
 
-    private fun openNoteScreen(note: Note) {
+    private fun openNoteScreen(note: Note? = null) {
         startActivity(NoteActivity.getStartIntent(context = this, note = note))
     }
 }

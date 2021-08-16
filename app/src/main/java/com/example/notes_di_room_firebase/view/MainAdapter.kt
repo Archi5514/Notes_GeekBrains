@@ -47,10 +47,9 @@ class MainAdapter(private val onClickListener: OnItemClickListener) : RecyclerVi
                 Color.RED -> R.color.color_red
                 Color.VIOLET -> R.color.color_violet
                 Color.YELLOW -> R.color.color_yellow
-                else -> R.color.color_white
             }
 
-            itemView.setBackgroundColor(color)
+            itemView.setBackgroundResource(color)
             itemView.setOnClickListener {
                 onClickListener.onItemClick(note)
             }
