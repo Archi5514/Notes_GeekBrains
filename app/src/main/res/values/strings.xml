@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Notes_DI_Room_Firebase</string>
+    <string name="new_note_title">New note</string>
+</resources>
