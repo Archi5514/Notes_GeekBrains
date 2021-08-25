@@ -1,22 +1,31 @@
 package com.example.notes_di_room_firebase.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.Observer
+import com.example.notes_di_room_firebase.model.Note
+import com.example.notes_di_room_firebase.model.NoteResult
 import com.example.notes_di_room_firebase.model.Repository
 import com.example.notes_di_room_firebase.view.MainViewState
 
-class MainViewModel : ViewModel() {
+class MainViewModel(private val repository: Repository = Repository) : BaseViewModel<List<Note>?, MainViewState>() {
 
-    private val viewStateLiveData: MutableLiveData<MainViewState> = MutableLiveData()
+    private val repositoryNotes = repository.getNotes()
+    private val notesObserver = object : Observer<NoteResult> {
+        override fun onChanged(result: NoteResult?) {
+            if(result == null) return
 
-    init {
-        Repository.getNotes().observeForever {
-            viewStateLiveData.value = viewStateLiveData.value?.copy(notes = it) ?: MainViewState(it)
+            when(result) {
+                is NoteResult.Success<*> -> viewStateLiveData.value = MainViewState(notes = result.data as List<Note>)
+                is NoteResult.Error -> viewStateLiveData.value = MainViewState(error = result.error)
+            }
         }
-
     }
 
-    fun viewState(): LiveData<MainViewState> = viewStateLiveData
+    init {
+        viewStateLiveData.value = MainViewState()
+        repositoryNotes.observeForever(notesObserver)
+    }
 
+    override fun onCleared() {
+        repositoryNotes.removeObserver(notesObserver)
+    }
 }

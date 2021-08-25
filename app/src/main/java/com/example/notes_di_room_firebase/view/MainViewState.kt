@@ -2,4 +2,5 @@ package com.example.notes_di_room_firebase.view
 
 import com.example.notes_di_room_firebase.model.Note
 
-data class MainViewState(val notes: List<Note>)
+class MainViewState(val notes: List<Note>? = null, error: Throwable? = null) :
+    BaseViewState<List<Note>?>(data = notes, error = error)

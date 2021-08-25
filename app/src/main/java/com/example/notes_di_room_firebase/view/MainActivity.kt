@@ -2,26 +2,22 @@ package com.example.notes_di_room_firebase.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.example.notes_di_room_firebase.databinding.ActivityMainBinding
 import com.example.notes_di_room_firebase.model.Note
+import com.example.notes_di_room_firebase.viewmodel.BaseViewModel
 import com.example.notes_di_room_firebase.viewmodel.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
 
-    private lateinit var ui: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
+    override val ui: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+    override val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
     private  lateinit var adapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ui = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(ui.root)
 
         setSupportActionBar(ui.toolbar)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         adapter = MainAdapter(object: OnItemClickListener {
             override fun onItemClick(note: Note) {
                 openNoteScreen(note = note)
@@ -29,14 +25,15 @@ class MainActivity : AppCompatActivity() {
         })
         ui.mainRecycler.adapter = adapter
 
-        viewModel.viewState().observe(this, { state ->
-            state?.let { adapter.notes = state.notes }
-        })
-
         ui.fab.setOnClickListener { openNoteScreen() }
     }
 
     private fun openNoteScreen(note: Note? = null) {
-        startActivity(NoteActivity.getStartIntent(context = this, note = note))
+        startActivity(NoteActivity.getStartIntent(context = this, noteId = note?.id))
+    }
+
+    override fun renderData(data: List<Note>?) {
+        if(data == null) return
+        adapter.notes = data
     }
 }
