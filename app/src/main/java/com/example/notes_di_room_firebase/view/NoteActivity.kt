@@ -56,6 +56,8 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         } ?: run {
             supportActionBar?.title = getString(R.string.new_note_title)
         }
+
+        initView()
     }
 
     private fun createNewNote(): Note = Note(
@@ -76,7 +78,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
             Color.RED -> R.color.color_red
             Color.VIOLET -> R.color.color_violet
             Color.YELLOW -> R.color.color_yellow
-            else -> R.color.color_white
+            else -> R.color.color_blue
         }
 
         ui.toolbar.setBackgroundColor(resources.getColor(color))
