@@ -1,11 +1,9 @@
 package com.example.notes_di_room_firebase.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.example.notes_di_room_firebase.databinding.ActivityMainBinding
 import com.example.notes_di_room_firebase.model.Note
-import com.example.notes_di_room_firebase.viewmodel.BaseViewModel
 import com.example.notes_di_room_firebase.viewmodel.MainViewModel
 
 class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
