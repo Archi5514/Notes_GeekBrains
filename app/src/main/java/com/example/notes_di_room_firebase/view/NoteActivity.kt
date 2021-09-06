@@ -3,6 +3,8 @@ package com.example.notes_di_room_firebase.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
@@ -29,7 +31,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     private var note: Note? = null
     override val ui: ActivityNoteBinding by lazy { ActivityNoteBinding.inflate(layoutInflater) }
     override val viewModel: NoteViewModel by lazy { ViewModelProvider(this).get(NoteViewModel::class.java) }
-    private val textChangeListener = object: TextWatcher {
+    private val textChangeListener = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             triggerSaveNote()
         }
@@ -51,13 +53,14 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
 
         setSupportActionBar(ui.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        noteId?.let { noteId ->
-            viewModel.loadNote(noteId = noteId)
+        noteId?.let {
+            viewModel.loadNote(noteId = it)
         } ?: run {
-            supportActionBar?.title = getString(R.string.new_note_title)
+            supportActionBar?.title = "New note"
         }
 
-        initView()
+        ui.titleEt.addTextChangedListener(textChangeListener)
+        ui.bodyEt.addTextChangedListener(textChangeListener)
     }
 
     private fun createNewNote(): Note = Note(
@@ -67,40 +70,33 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
     )
 
     private fun initView() {
-        ui.titleEt.setText(note?.title ?: "")
-        ui.bodyEt.setText(note?.body ?: "")
-
-        val color = when (note?.color) {
-            Color.WHITE -> R.color.color_white
-            Color.BLUE -> R.color.color_blue
-            Color.GREEN -> R.color.color_green
-            Color.PINK -> R.color.color_pink
-            Color.RED -> R.color.color_red
-            Color.VIOLET -> R.color.color_violet
-            Color.YELLOW -> R.color.color_yellow
-            else -> R.color.color_blue
+        note?.run {
+            ui.toolbar.setBackgroundColor(color.getColorInt(this@NoteActivity))
+            ui.titleEt.setText(title)
+            ui.bodyEt.setText(body)
+            supportActionBar?.title = lastChanged.format()
         }
 
-        ui.toolbar.setBackgroundColor(resources.getColor(color))
         ui.titleEt.addTextChangedListener(textChangeListener)
         ui.bodyEt.addTextChangedListener(textChangeListener)
     }
 
     private fun triggerSaveNote() {
-        if(ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
+        if (ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
 
-        runOnUiThread {
+        Handler(Looper.getMainLooper()).postDelayed({
             note = note?.copy(
                 title = ui.titleEt.text.toString(),
                 body = ui.bodyEt.text.toString(),
                 lastChanged = Date()
             ) ?: createNewNote()
 
-            note?.let{ note -> viewModel.saveChanges(note) }
-        }
+            note?.let { note -> viewModel.saveChanges(note) }
+        }, 2000L)
+
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when(item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
         android.R.id.home -> {
             onBackPressed()
             true
