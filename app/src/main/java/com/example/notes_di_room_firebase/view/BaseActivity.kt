@@ -2,6 +2,7 @@ package com.example.notes_di_room_firebase.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.viewbinding.ViewBinding
 import com.example.notes_di_room_firebase.R
 import com.example.notes_di_room_firebase.viewmodel.BaseViewModel

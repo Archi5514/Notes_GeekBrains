@@ -1,12 +1,9 @@
 package com.example.notes_di_room_firebase.viewmodel
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import com.example.notes_di_room_firebase.model.Note
 import com.example.notes_di_room_firebase.model.NoteResult
 import com.example.notes_di_room_firebase.model.Repository
-import com.example.notes_di_room_firebase.view.BaseViewState
-import com.example.notes_di_room_firebase.view.MainViewState
 import com.example.notes_di_room_firebase.view.NoteViewState
 
 class NoteViewModel(private val repository: Repository = Repository) :

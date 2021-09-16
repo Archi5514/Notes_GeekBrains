@@ -8,15 +8,11 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewbinding.ViewBinding
-import com.example.notes_di_room_firebase.R
 import com.example.notes_di_room_firebase.databinding.ActivityNoteBinding
 import com.example.notes_di_room_firebase.model.Color
 import com.example.notes_di_room_firebase.model.Note
 import com.example.notes_di_room_firebase.viewmodel.NoteViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteActivity : BaseActivity<Note?, NoteViewState>() {
@@ -57,6 +53,7 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
             viewModel.loadNote(noteId = it)
         } ?: run {
             supportActionBar?.title = "New note"
+            ui.toolbar.setBackgroundColor(Color.BLUE.getColorInt(this@NoteActivity))
         }
 
         ui.titleEt.addTextChangedListener(textChangeListener)

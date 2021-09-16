@@ -7,7 +7,7 @@ import com.example.notes_di_room_firebase.view.BaseViewState
 
 abstract class BaseViewModel<T, VS : BaseViewState<T>> : ViewModel() {
 
-    open val viewStateLiveData = MutableLiveData<VS>()
+    val viewStateLiveData = MutableLiveData<VS>()
 
-    open fun getViewState(): LiveData<VS> = viewStateLiveData
+    fun getViewState(): LiveData<VS> = viewStateLiveData
 }
