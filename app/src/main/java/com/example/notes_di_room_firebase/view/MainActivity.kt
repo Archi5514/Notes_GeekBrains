@@ -4,19 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProvider
 import com.example.notes_di_room_firebase.R
 import com.example.notes_di_room_firebase.databinding.ActivityMainBinding
 import com.example.notes_di_room_firebase.model.Note
 import com.example.notes_di_room_firebase.viewmodel.MainViewModel
 import com.firebase.ui.auth.AuthUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.LogoutListener {
 
     override val ui: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-    override val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
+    override val viewModel: MainViewModel by viewModel()
     private lateinit var adapter: MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +38,7 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.Lo
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean =
-        MenuInflater(this).inflate(R.menu.menu_main, menu).let { true }
+        menuInflater.inflate(R.menu.menu_main, menu).let { true }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when(item.itemId) {

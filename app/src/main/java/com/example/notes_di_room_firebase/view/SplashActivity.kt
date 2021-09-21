@@ -2,15 +2,14 @@ package com.example.notes_di_room_firebase.view
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.lifecycle.ViewModelProvider
 import com.example.notes_di_room_firebase.R
 import com.example.notes_di_room_firebase.databinding.ActivitySplashBinding
 import com.example.notes_di_room_firebase.model.NoAuthException
 import com.example.notes_di_room_firebase.viewmodel.SplashViewModel
 import com.firebase.ui.auth.AuthUI
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private const val RC_SIGN_IN = 42
 private const val START_DELAY = 1000L
@@ -18,7 +17,7 @@ private const val START_DELAY = 1000L
 class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
 
     override val ui: ActivitySplashBinding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
-    override val viewModel: SplashViewModel by lazy { ViewModelProvider(this).get(SplashViewModel::class.java) }
+    override val viewModel: SplashViewModel by viewModel()
 
     override fun onResume() {
         super.onResume()

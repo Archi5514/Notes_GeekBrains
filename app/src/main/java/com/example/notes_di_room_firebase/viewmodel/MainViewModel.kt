@@ -6,7 +6,7 @@ import com.example.notes_di_room_firebase.model.NoteResult
 import com.example.notes_di_room_firebase.model.Repository
 import com.example.notes_di_room_firebase.view.MainViewState
 
-class MainViewModel(private val repository: Repository = Repository) : BaseViewModel<List<Note>?, MainViewState>() {
+class MainViewModel(private val repository: Repository) : BaseViewModel<List<Note>?, MainViewState>() {
 
     private val repositoryNotes = repository.getNotes()
     private val notesObserver = object : Observer<NoteResult> {

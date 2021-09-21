@@ -13,23 +13,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 private const val NOTES_COLLECTION = "notes"
 private const val USERS_COLLECTION = "users"
 
-class FireStoreProvider : RemoteDataProvider {
+class FireStoreProvider(private val db: FirebaseFirestore, private val firebaseAuth: FirebaseAuth) :
+    RemoteDataProvider {
 
-    companion object {
-        private val TAG = "${FireStoreProvider::class.java.simpleName} :"
-    }
-
-    private val db = FirebaseFirestore.getInstance()
     private val currentUser
-        get() = FirebaseAuth.getInstance().currentUser
+        get() = firebaseAuth.currentUser
 
     override fun subscribeToAllNotes(): LiveData<NoteResult> =
         MutableLiveData<NoteResult>().apply {
             try {
-
                 getUserNotesCollection().addSnapshotListener { snapshot, exception ->
                     value = exception?.let {
-                        NoteResult.Error(error = it)
+                        throw it
                     } ?: snapshot?.let {
                         NoteResult.Success(data = it.documents.map { documentSnapshot ->
                             documentSnapshot.toObject(
@@ -38,7 +33,6 @@ class FireStoreProvider : RemoteDataProvider {
                         })
                     }
                 }
-
             } catch (exception: Throwable) {
                 value = NoteResult.Error(error = exception)
             }
@@ -47,15 +41,13 @@ class FireStoreProvider : RemoteDataProvider {
     override fun getNoteById(id: String): LiveData<NoteResult> =
         MutableLiveData<NoteResult>().apply {
             try {
-
                 getUserNotesCollection().document(id).get()
                     .addOnSuccessListener { snapshot ->
                         value = NoteResult.Success(snapshot.toObject(Note::class.java))
                     }
-                    .addOnFailureListener { exception ->
-                        value = NoteResult.Error(error = exception)
+                    .addOnFailureListener {
+                        throw it
                     }
-
             } catch (exception: Throwable) {
                 value = NoteResult.Error(error = exception)
             }
@@ -64,17 +56,15 @@ class FireStoreProvider : RemoteDataProvider {
     override fun saveNote(note: Note): LiveData<NoteResult> =
         MutableLiveData<NoteResult>().apply {
             try {
-
                 getUserNotesCollection().document(note.id).set(note)
                     .addOnSuccessListener {
                         Log.d(TAG, "Note $note is saved")
                         value = NoteResult.Success(data = note)
                     }
-                    .addOnFailureListener { exception ->
-                        Log.d(TAG, "Error saving note $note, message: ${exception.message}")
-                        value = NoteResult.Error(error = exception)
+                    .addOnFailureListener {
+                        Log.d(TAG, "Error saving note $note, message: ${it.message}")
+                        throw it
                     }
-
             } catch (exception: Throwable) {
                 value = NoteResult.Error(error = exception)
             }
@@ -90,6 +80,21 @@ class FireStoreProvider : RemoteDataProvider {
             }
         }
 
+    override fun deleteNote(id: String): LiveData<NoteResult> =
+        MutableLiveData<NoteResult>().apply {
+            try {
+                getUserNotesCollection().document(id).delete()
+                    .addOnSuccessListener {
+                        value = NoteResult.Success(data = null)
+                    }
+                    .addOnFailureListener {
+                        throw it
+                    }
+            } catch (exception: Throwable) {
+                value = NoteResult.Error(error = exception)
+            }
+        }
+
     private fun getUserNotesCollection() = currentUser?.let { firebaseUser ->
         db.collection(USERS_COLLECTION)
             // document означает взять юзера по критерии (тому, что в скобках)
@@ -97,4 +102,8 @@ class FireStoreProvider : RemoteDataProvider {
             // создание подколлекции в документе с названием документа firebaseUser.uid и названием коллекции NOTES_COLLECTION
             .collection(NOTES_COLLECTION)
     } ?: throw NoAuthException()
+
+    companion object {
+        private val TAG = "${FireStoreProvider::class.java.simpleName} :"
+    }
 }
