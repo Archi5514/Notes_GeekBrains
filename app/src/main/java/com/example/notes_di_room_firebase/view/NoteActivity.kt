@@ -101,8 +101,10 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
                 R.id.colorPink -> Color.PINK
                 else -> Color.BLUE
             }
-            updateNote()
-            note?.let { note -> viewModel.saveChanges(note) }
+            note?.let { note ->
+                updateNote()
+                viewModel.saveChanges(note)
+            } ?: kotlin.run { note = createNewNote() }
 
             initView()
 
@@ -124,7 +126,8 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     private fun createNewNote(): Note = Note(
         id = UUID.randomUUID().toString(),
         title = ui.titleEt.text.toString(),
-        body = ui.bodyEt.text.toString()
+        body = ui.bodyEt.text.toString(),
+        color = activityColor
     )
 
     private fun initView() {
@@ -148,7 +151,7 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
         if (ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
 
         Handler(Looper.getMainLooper()).postDelayed({
-            note?.let { updateNote() } ?: createNewNote()
+            note?.let { updateNote() } ?: run { note = createNewNote() }
 
             note?.let { note -> viewModel.saveChanges(note) }
         }, 2000L)

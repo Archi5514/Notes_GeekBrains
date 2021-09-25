@@ -23,3 +23,13 @@ fun Color.getColorRes(): Int = when(this) {
     Color.VIOLET -> R.color.color_violet
     Color.YELLOW -> R.color.color_yellow
 }
+
+fun sortArray(list: List<Int?>?): List<Int> =
+    list?.filterNotNull()
+        ?.distinct()
+        ?.sorted()
+        ?.reversed()
+        ?: listOf()
+
+
+
