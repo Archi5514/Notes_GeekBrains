@@ -3,11 +3,18 @@ package com.example.notes_di_room_firebase.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.notes_di_room_firebase.view.BaseViewState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseViewModel<T, VS : BaseViewState<T>> : ViewModel() {
+open class BaseViewModel<T> : ViewModel(), CoroutineScope {
 
-    val viewStateLiveData = MutableLiveData<VS>()
+    override val coroutineContext: CoroutineContext by lazy {
+        Dispatchers.Default + Job()
+    }
 
-    fun getViewState(): LiveData<VS> = viewStateLiveData
+    open val viewStateLiveData = MutableLiveData<VS>()
+
+    open fun getViewState(): LiveData<VS> = viewStateLiveData
+
 }

@@ -1,20 +1,21 @@
 package com.example.notes_di_room_firebase.model.providers
 
-import androidx.lifecycle.LiveData
 import com.example.notes_di_room_firebase.model.Note
 import com.example.notes_di_room_firebase.model.NoteResult
 import com.example.notes_di_room_firebase.model.User
+import kotlinx.coroutines.channels.ReceiveChannel
+import java.lang.Exception
 
 interface RemoteDataProvider {
 
-    fun subscribeToAllNotes(): LiveData<NoteResult>
+    suspend fun subscribeToAllNotes(): ReceiveChannel<NoteResult>
 
-    fun getNoteById(id: String): LiveData<NoteResult>
+    suspend fun getNoteById(id: String): Note
 
-    fun saveNote(note: Note): LiveData<NoteResult>
+    suspend fun saveNote(note: Note): Note
 
-    fun getCurrentUser(): LiveData<User?>
+    suspend fun getCurrentUser(): User
 
-    fun deleteNote(id: String): LiveData<NoteResult>
+    suspend fun deleteNote(id: String): Exception?
 
 }
