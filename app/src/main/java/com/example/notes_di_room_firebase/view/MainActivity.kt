@@ -12,7 +12,7 @@ import com.example.notes_di_room_firebase.viewmodel.MainViewModel
 import com.firebase.ui.auth.AuthUI
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.LogoutListener {
+class MainActivity : BaseActivity<List<Note>?>(), LogoutDialog.LogoutListener {
 
     override val ui: ActivityMainBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     override val viewModel: MainViewModel by viewModel()

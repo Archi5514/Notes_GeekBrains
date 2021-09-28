@@ -27,4 +27,5 @@
     <string name="menu_color_yellow">Yellow</string>
     <string name="menu_color_violet">Violet</string>
     <string name="menu_color_pink">Pink</string>
+    <string name="snackbar_clear">Clear!</string>
 </resources>

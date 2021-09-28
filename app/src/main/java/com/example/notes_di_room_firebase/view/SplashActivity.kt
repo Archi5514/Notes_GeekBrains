@@ -14,7 +14,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 private const val RC_SIGN_IN = 42
 private const val START_DELAY = 1000L
 
-class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
+class SplashActivity : BaseActivity<Boolean?>() {
 
     override val ui: ActivitySplashBinding by lazy { ActivitySplashBinding.inflate(layoutInflater) }
     override val viewModel: SplashViewModel by viewModel()

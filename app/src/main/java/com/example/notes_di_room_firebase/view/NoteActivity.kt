@@ -3,8 +3,6 @@ package com.example.notes_di_room_firebase.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -16,10 +14,12 @@ import com.example.notes_di_room_firebase.databinding.ActivityNoteBinding
 import com.example.notes_di_room_firebase.model.Color
 import com.example.notes_di_room_firebase.model.Note
 import com.example.notes_di_room_firebase.viewmodel.NoteViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
+class NoteActivity : BaseActivity<NoteData>() {
 
     private var note: Note? = null
     private var activityColor: Color = Color.BLUE
@@ -68,7 +68,7 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
             else -> super.onOptionsItemSelected(item)
         }
 
-    override fun renderData(data: NoteViewState.Data) {
+    override fun renderData(data: NoteData) {
         if (data.isDeleted) finish()
 
         this.note = data.note
@@ -101,12 +101,8 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
                 R.id.colorPink -> Color.PINK
                 else -> Color.BLUE
             }
-            note?.let { note ->
-                updateNote()
-                viewModel.saveChanges(note)
-            } ?: kotlin.run { note = createNewNote() }
-
-            initView()
+            ui.toolbar.setBackgroundColor(activityColor.getColorInt(this))
+            triggerSaveNote()
 
             return@setOnMenuItemClickListener true
         }
@@ -150,21 +146,19 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     private fun triggerSaveNote() {
         if (ui.titleEt.text == null || ui.titleEt.text!!.length < 3) return
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            note?.let { updateNote() } ?: run { note = createNewNote() }
+        launch {
+            delay(1000)
+
+            note = note?.copy(
+                title = ui.titleEt.text.toString(),
+                body = ui.bodyEt.text.toString(),
+                lastChanged = Date(),
+                color = activityColor
+            ) ?:  createNewNote()
 
             note?.let { note -> viewModel.saveChanges(note) }
-        }, 2000L)
+        }
 
-    }
-
-    private fun updateNote() {
-        note = note?.copy(
-            title = ui.titleEt.text.toString(),
-            body = ui.bodyEt.text.toString(),
-            lastChanged = Date(),
-            color = activityColor
-        )
     }
 
     companion object {

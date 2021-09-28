@@ -79,7 +79,7 @@ class FireStoreProvider(private val db: FirebaseFirestore, private val firebaseA
             }
         }
 
-    override suspend fun getCurrentUser(): User =
+    override suspend fun getCurrentUser(): User? =
         suspendCoroutine { continuation ->
             currentUser?.let {
                 continuation.resume(
@@ -88,7 +88,7 @@ class FireStoreProvider(private val db: FirebaseFirestore, private val firebaseA
                         email = it.email ?: ""
                     )
                 )
-            } ?: continuation.resumeWithException(NoAuthException())
+            } ?: continuation.resume(null)
         }
 
     override suspend fun deleteNote(id: String): Exception? =

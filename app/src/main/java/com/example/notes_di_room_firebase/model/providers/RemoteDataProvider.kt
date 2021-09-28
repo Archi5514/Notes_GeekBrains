@@ -14,7 +14,7 @@ interface RemoteDataProvider {
 
     suspend fun saveNote(note: Note): Note
 
-    suspend fun getCurrentUser(): User
+    suspend fun getCurrentUser(): User?
 
     suspend fun deleteNote(id: String): Exception?
 
